@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstddef>
 #include <string>
 #include <any>
 #include <unordered_map>
@@ -17,5 +18,5 @@ struct VectorRecord
     std::vector<T> vector;
     Metadata metadata;
 
-    size_t dimension() const { return vector.size(); }
+    std::size_t dimension() const { return vector.size(); }
 };

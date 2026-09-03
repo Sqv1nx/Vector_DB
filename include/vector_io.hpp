@@ -1,6 +1,8 @@
 #pragma once
 
 #include "data_structure.hpp"
+
+#include <cstdint>
 #include <fstream>
 #include <vector>
 #include <stdexcept>
@@ -16,7 +18,7 @@ public:
             throw std::runtime_error("File could not be opened.");
 
         std::vector<VectorRecord<T>> records;
-        int32_t dim{};
+        std::int32_t dim{};
         int current_id{0};
 
         while (input_file.read(reinterpret_cast<char *>(&dim), sizeof(dim)))
@@ -30,5 +32,7 @@ public:
 
             records.push_back(new_record);
         }
+
+        return records;
     }
 };
