@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/Vector_DB.dir/src/main.cpp.o CMakeFiles/Vector_DB.dir/src/flat_search.cpp.o -o Vector_DB 

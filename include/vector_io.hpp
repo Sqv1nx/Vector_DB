@@ -11,7 +11,7 @@ class VectorStoreIO
 {
 public:
     template <typename T>
-    static std::vector<VectorRecord<T>> read_vec(const std::string &file_path)
+    static std::vector<VectorRecord<T>> read_vecs(const std::string &file_path)
     {
         std::ifstream input_file(file_path, std::ios::binary);
         if (!input_file)

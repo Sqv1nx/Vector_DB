@@ -6,7 +6,7 @@
 #include <algorithm>
 
 template <typename T>
-float euclidean_distance(const std::vector<T> &a, const std::vector<T> &b)
+float squared_l2_distance(const std::vector<T> &a, const std::vector<T> &b)
 {
     if (a.size() != b.size())
         return -1;
@@ -29,10 +29,7 @@ std::vector<int> flat_search(std::size_t k, const VectorRecord<T> &query, const 
 
     for (std::size_t i{0}; i < records.size(); ++i)
     {
-        if (records[i].id == query.id)
-            continue;
-
-        float distance{euclidean_distance(records[i].vector, query.vector)};
+        float distance{squared_l2_distance(records[i].vector, query.vector)};
 
         if (top_k.size() < k)
             top_k.push({distance, records[i].id});
@@ -55,3 +52,5 @@ std::vector<int> flat_search(std::size_t k, const VectorRecord<T> &query, const 
 
     return closest_k_id;
 }
+// Explicit instantiation for float
+template std::vector<int> flat_search<float>(std::size_t, const VectorRecord<float>&, const std::vector<VectorRecord<float>>&);
