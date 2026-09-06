@@ -1,3 +1,0 @@
-/home/sqv/Vector_DB/build/CMakeFiles/Vector_DB.dir
-/home/sqv/Vector_DB/build/CMakeFiles/edit_cache.dir
-/home/sqv/Vector_DB/build/CMakeFiles/rebuild_cache.dir
