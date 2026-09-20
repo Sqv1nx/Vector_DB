@@ -1,15 +1,16 @@
 #include "data_structure.hpp"
-
+#include "flat_search.hpp"
 #include <queue>
 #include <vector>
 #include <cstddef>
 #include <algorithm>
+#include <stdexcept>
 
 template <typename T>
 float squared_l2_distance(const std::vector<T> &a, const std::vector<T> &b)
 {
     if (a.size() != b.size())
-        return -1;
+        throw std::invalid_argument("Vector dimensions do not match.");
 
     float dist{0.0f};
 
@@ -53,4 +54,4 @@ std::vector<int> flat_search(std::size_t k, const VectorRecord<T> &query, const 
     return closest_k_id;
 }
 // Explicit instantiation for float
-template std::vector<int> flat_search<float>(std::size_t, const VectorRecord<float>&, const std::vector<VectorRecord<float>>&);
+template std::vector<int> flat_search<float>(std::size_t, const VectorRecord<float> &, const std::vector<VectorRecord<float>> &);

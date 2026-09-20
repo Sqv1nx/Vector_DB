@@ -6,6 +6,7 @@
 #include <fstream>
 #include <vector>
 #include <stdexcept>
+#include <utility>
 
 class VectorStoreIO
 {
@@ -30,7 +31,7 @@ public:
 
             input_file.read(reinterpret_cast<char *>(new_record.vector.data()), dim * sizeof(T));
 
-            records.push_back(new_record);
+            records.push_back(std::move(new_record));
         }
 
         return records;
