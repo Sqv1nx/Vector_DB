@@ -28,6 +28,17 @@ public:
         init();
     }
 
+    ~MmapArena()
+    {
+        if (m_fd != -1)
+        {
+            munmap(m_data, m_size);
+            close(m_fd);
+        }
+
+        init();
+    }
+
     int open_file(const std::string &filename, std::size_t file_size)
     {
         m_fd = open(filename, O_RDWR);
@@ -38,6 +49,7 @@ public:
         }
 
         m_size = file_size;
+
         void *mapped = mmap(nullptr, m_size, PROT_READ | PROT_WRITE, MAP_SHARED, m_fd, 0);
 
         if (mapped == MAP_FAILED)
@@ -54,39 +66,51 @@ public:
 
     int close_file()
     {
-        if (m_fd != -1)
+        if (m_fd == -1)
         {
-            if (munmap(m_data, m_size) == -1)
-            {
-                // error handling
-                return 1;
-            }
-
-            close(m_fd);
-            init();
-
-            return 0;
-        }
-        else
-        {
-            // no file open
             return 1;
         }
+
+        if (munmap(m_data, m_size) == -1)
+        {
+            return 1;
+        }
+
+        if (close(m_fd) == -1)
+        {
+            init();
+            return 1;
+        }
+        init();
+        return 0;
     }
 
     int create_file(const std::string &filename, std::size_t file_size)
     {
-        m_fd = open(filename, O_RDWR | O_CREAT);
+        m_fd = open(filename, O_RDWR | O_CREAT, 0644);
         if (m_fd == -1)
         {
             init();
             return 1;
         }
 
+        if (ftruncate(m_fd, file_size) == -1)
+        {
+            close(m_fd);
+            init();
+            return 1;
+        }
+
         m_size = file_size;
-        ftruncate(m_fd, m_size);
 
         void *mapped = mmap(nullptr, m_size, PROT_READ | PROT_WRITE, MAP_SHARED, m_fd, 0);
+
+        if (mapped == MAP_FAILED)
+        {
+            close(m_fd);
+            init();
+            return 1;
+        }
 
         m_data = static_cast<char *>(mapped);
 
@@ -95,7 +119,7 @@ public:
 
     int flush()
     {
-        if (m_data == nullptr)
+        if (m_fd == -1)
         {
             return 1;
         }
@@ -110,13 +134,38 @@ public:
 
     int grow(std::size_t new_size)
     {
+        if (m_fd == -1)
+        {
+            return 1;
+        }
+
+        if (new_size <= m_size)
+        {
+            return 1;
+        }
+
         if (munmap(m_data, m_size) == -1)
         {
             return 1;
         }
+
+        if (ftruncate(m_fd, new_size) == -1)
+        {
+            init();
+            return 1;
+        }
+
+        void *mapped = mmap(nullptr, new_size, PROT_READ | PROT_WRITE, MAP_SHARED, m_fd, 0);
+
+        if (mapped == MAP_FAILED)
+        {
+            init();
+            return 1;
+        }
+
+        m_data = static_cast<char *>(mapped);
         m_size = new_size;
-        ftruncate(m_fd, m_size);
-        m_data = static_cast<char *>(mmap(nullptr, m_size, PROT_READ | PROT_WRITE, MAP_SHARED, m_fd, 0));
+
         return 0;
     }
 
