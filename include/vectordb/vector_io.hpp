@@ -1,6 +1,6 @@
 #pragma once
 
-#include "data_structure.hpp"
+#include "vectordb/data_structure.hpp"
 
 #include <cstdint>
 #include <fstream>
